@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+tqdm
+nltk
+scikit-learn
+plotly
+seaborn
+spacy
