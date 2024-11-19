@@ -7,3 +7,5 @@ scikit-learn
 plotly
 seaborn
 spacy
+torch
+transformers
