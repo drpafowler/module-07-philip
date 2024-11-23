@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Web Mining and Applied NLP (44-620)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="article-summarizer_files/libs/clipboard/clipboard.min.js"></script>
+<script src="article-summarizer_files/libs/quarto-html/quarto.js"></script>
+<script src="article-summarizer_files/libs/quarto-html/popper.min.js"></script>
+<script src="article-summarizer_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="article-summarizer_files/libs/quarto-html/anchor.min.js"></script>
+<link href="article-summarizer_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="article-summarizer_files/libs/quarto-html/quarto-syntax-highlighting-01c78b5cd655e4cd89133cf59d535862.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="article-summarizer_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="article-summarizer_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="article-summarizer_files/libs/bootstrap/bootstrap-7be766b5dc8cc0ed8b7ee33131167c06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Web Mining and Applied NLP (44-620)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="cell-1" class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns   </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> stopwords</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tqdm</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> spacy</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> vaderSentiment.vaderSentiment <span class="im">import</span> SentimentIntensityAnalyzer</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="final-project-article-summarizer" class="level2">
+<h2 class="anchored" data-anchor-id="final-project-article-summarizer">Final Project: Article Summarizer</h2>
+<section id="student-name-philip-fowler" class="level3">
+<h3 class="anchored" data-anchor-id="student-name-philip-fowler">Student Name: Philip Fowler</h3>
+<p>Perform the tasks described in the Markdown cells below. When you have completed the assignment make sure your code cells have all been run (and have output beneath them) and ensure you have committed and pushed ALL of your changes to your assignment repository.</p>
+<p>You should bring in code from previous assignments to help you answer the questions below.</p>
+<p>Every question that requires you to write code will have a code cell underneath it; you may either write your entire solution in that cell or write it in a python file (<code>.py</code>), then import and run the appropriate code to answer the question.</p>
+<ol type="1">
+<li>Find on the internet an article or blog post about a topic that interests you and you are able to get the text for using the technologies we have applied in the course. Get the html for the article and store it in a file (which you must submit with your project)</li>
+</ol>
+<div id="cell-4" class="cell" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is how the data was downloaded using the Kaggle API</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The data is already in the data folder, thus, it is now commented out</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The most challenging part was to install the Kaggle API and to set up the API key </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># I initially put the API key in the wrong place.  usr/bin/kaggle.json is the correct location  </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># import kagglehub</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># import shutil</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># import os</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Download latest version</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># path = kagglehub.dataset_download("austinreese/trump-tweets")</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data directory if it doesn't exist</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># data_dir = "data"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># if not os.path.exists(data_dir):</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#    os.makedirs(data_dir)</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Move downloaded files to data directory</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># for file_name in os.listdir(path):</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    full_file_name = os.path.join(path, file_name)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#    if os.path.isfile(full_file_name):</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#        shutil.move(full_file_name, data_dir)</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Files have been moved to the data folder.")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-5" class="cell" data-execution_count="65">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file into a dataframe</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets <span class="op">=</span> pd.read_csv(<span class="st">'data/realdonaldtrump.csv'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           id                                               link  \
+0  1698308935  https://twitter.com/realDonaldTrump/status/169...   
+1  1701461182  https://twitter.com/realDonaldTrump/status/170...   
+2  1737479987  https://twitter.com/realDonaldTrump/status/173...   
+3  1741160716  https://twitter.com/realDonaldTrump/status/174...   
+4  1773561338  https://twitter.com/realDonaldTrump/status/177...   
+
+                                             content                 date  \
+0  Be sure to tune in and watch Donald Trump on L...  2009-05-04 13:54:25   
+1  Donald Trump will be appearing on The View tom...  2009-05-04 20:00:10   
+2  Donald Trump reads Top Ten Financial Tips on L...  2009-05-08 08:38:08   
+3  New Blog Post: Celebrity Apprentice Finale and...  2009-05-08 15:40:15   
+4  "My persona will never be that of a wallflower...  2009-05-12 09:07:28   
+
+   retweets  favorites mentions hashtags  
+0       510        917      NaN      NaN  
+1        34        267      NaN      NaN  
+2        13         19      NaN      NaN  
+3        11         26      NaN      NaN  
+4      1375       1945      NaN      NaN  </code></pre>
+</div>
+</div>
+<div id="cell-6" class="cell" data-execution_count="66">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the columns 'content' and 'date' from the dataframe</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df_content_date <span class="op">=</span> df_trump_tweets[[<span class="st">'content'</span>, <span class="st">'date'</span>]]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the selected columns to an HTML file</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df_content_date.to_html(<span class="st">'trumptweets.html'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Before we jump right into the questions. Let’s take a look at the data we will be working with.</p>
+<div id="cell-8" class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_trump_tweets.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="67">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">retweets</th>
+<th data-quarto-table-cell-role="th">favorites</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>4.335200e+04</td>
+<td>43352.000000</td>
+<td>43352.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>6.418822e+17</td>
+<td>6264.766908</td>
+<td>26234.241788</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>3.270437e+17</td>
+<td>11120.363335</td>
+<td>47705.445640</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>1.698309e+09</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>3.645313e+17</td>
+<td>27.000000</td>
+<td>30.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>5.852812e+17</td>
+<td>396.500000</td>
+<td>369.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>9.076133e+17</td>
+<td>10753.000000</td>
+<td>45784.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>1.273443e+18</td>
+<td>302269.000000</td>
+<td>835575.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-9" class="cell" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_trump_tweets.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 43352 entries, 0 to 43351
+Data columns (total 8 columns):
+ #   Column     Non-Null Count  Dtype 
+---  ------     --------------  ----- 
+ 0   id         43352 non-null  int64 
+ 1   link       43352 non-null  object
+ 2   content    43352 non-null  object
+ 3   date       43352 non-null  object
+ 4   retweets   43352 non-null  int64 
+ 5   favorites  43352 non-null  int64 
+ 6   mentions   20386 non-null  object
+ 7   hashtags   5583 non-null   object
+dtypes: int64(3), object(5)
+memory usage: 2.6+ MB</code></pre>
+</div>
+</div>
+<div id="cell-10" class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file into a dataframe</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets <span class="op">=</span> pd.read_csv(<span class="st">'data/realdonaldtrump.csv'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'date' column is in datetime format</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweets[<span class="st">'date'</span>])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort the DataFrame by date</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>df_trump_tweets <span class="op">=</span> df_trump_tweets.sort_values(<span class="st">'date'</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the retweets and favorites over time</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>plt.plot(df_trump_tweets[<span class="st">'date'</span>], df_trump_tweets[<span class="st">'retweets'</span>], label<span class="op">=</span><span class="st">'Retweets'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>plt.plot(df_trump_tweets[<span class="st">'date'</span>], df_trump_tweets[<span class="st">'favorites'</span>], label<span class="op">=</span><span class="st">'Favorites'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Retweets and Favorites Over Time'</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Date'</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Count'</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=-</span><span class="dv">45</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It certainly looks like President Trump started to get a lot of retweets after he was elected in 2016.</p>
+<div id="cell-12" class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'date' column is in datetime format</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweets[<span class="st">'date'</span>])</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the year from the 'date' column</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'year'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.year</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the number of tweets per year</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>tweets_per_year <span class="op">=</span> df_trump_tweets.groupby(<span class="st">'year'</span>).size()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the number of tweets per year</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tweets_per_year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>year
+2009      56
+2010     143
+2011     869
+2012    4193
+2013    8203
+2014    6001
+2015    7707
+2016    3945
+2017    2231
+2018    3001
+2019    4590
+2020    2413
+dtype: int64</code></pre>
+</div>
+</div>
+<div id="cell-13" class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'date' column is in datetime format</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweets[<span class="st">'date'</span>])</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the number of tweets per day</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>tweets_per_day <span class="op">=</span> df_trump_tweets.groupby(df_trump_tweets[<span class="st">'date'</span>].dt.date).size()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the number of tweets per day</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tweets_per_day)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionally, plot the number of tweets per day</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>tweets_per_day.plot(kind<span class="op">=</span><span class="st">'line'</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Number of Tweets Per Day'</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Date'</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Number of Tweets'</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>date
+2009-05-04     2
+2009-05-08     2
+2009-05-12     2
+2009-05-13     1
+2009-05-14     1
+              ..
+2020-06-13    19
+2020-06-14     7
+2020-06-15     8
+2020-06-16     8
+2020-06-17     5
+Length: 3309, dtype: int64</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>So Trump tweeted more often before his election and was retweeted more often afterwards. Interesting.</p>
+<div id="cell-15" class="cell" data-execution_count="72">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the length of each tweet</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'tweet_length'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">apply</span>(<span class="bu">len</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average length of the tweets</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>average_tweet_length <span class="op">=</span> df_trump_tweets[<span class="st">'tweet_length'</span>].mean()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the minimum length of the tweets</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>min_tweet_length <span class="op">=</span> df_trump_tweets[<span class="st">'tweet_length'</span>].<span class="bu">min</span>()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the maximum length of the tweets</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>max_tweet_length <span class="op">=</span> df_trump_tweets[<span class="st">'tweet_length'</span>].<span class="bu">max</span>()</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the median length of the tweets</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>median_tweet_length <span class="op">=</span> df_trump_tweets[<span class="st">'tweet_length'</span>].median()</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mode length of the tweets</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>mode_tweet_length <span class="op">=</span> df_trump_tweets[<span class="st">'tweet_length'</span>].mode()[<span class="dv">0</span>]</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the range of the tweet lengths</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>range_tweet_length <span class="op">=</span> max_tweet_length <span class="op">-</span> min_tweet_length</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the statistics</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average length of tweets: </span><span class="sc">{</span>average_tweet_length<span class="sc">:.2f}</span><span class="ss"> characters"</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Minimum length of tweets: </span><span class="sc">{</span>min_tweet_length<span class="sc">}</span><span class="ss"> characters"</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Maximum length of tweets: </span><span class="sc">{</span>max_tweet_length<span class="sc">}</span><span class="ss"> characters"</span>)</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Median length of tweets: </span><span class="sc">{</span>median_tweet_length<span class="sc">}</span><span class="ss"> characters"</span>)</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mode length of tweets: </span><span class="sc">{</span>mode_tweet_length<span class="sc">}</span><span class="ss"> characters"</span>)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Range of tweet lengths: </span><span class="sc">{</span>range_tweet_length<span class="sc">}</span><span class="ss"> characters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Average length of tweets: 131.53 characters
+Minimum length of tweets: 4 characters
+Maximum length of tweets: 406 characters
+Median length of tweets: 130.0 characters
+Mode length of tweets: 140 characters
+Range of tweet lengths: 402 characters</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Read in your article’s html source from the file you created in question 1 and do sentiment analysis on the article/post’s text (use <code>.get_text()</code>). Print the polarity score with an appropriate label. Additionally print the number of sentences in the original article (with an appropriate label)</li>
+</ol>
+<div id="cell-17" class="cell" data-execution_count="73">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the VADER sentiment analyzer</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>analyzer <span class="op">=</span> SentimentIntensityAnalyzer()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate sentiment</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_vader_sentiment(text):</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    sentiment <span class="op">=</span> analyzer.polarity_scores(text)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sentiment[<span class="st">'compound'</span>]</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to the 'content' column and create a new column 'vader_sentiment'</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'vader_sentiment'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">apply</span>(get_vader_sentiment)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the DataFrame</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets[[<span class="st">'content'</span>, <span class="st">'vader_sentiment'</span>]].head())</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets[[<span class="st">'content'</span>, <span class="st">'vader_sentiment'</span>]].tail())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             content  vader_sentiment
+0  Be sure to tune in and watch Donald Trump on L...           0.5255
+1  Donald Trump will be appearing on The View tom...           0.7712
+2  Donald Trump reads Top Ten Financial Tips on L...           0.6468
+3  New Blog Post: Celebrity Apprentice Finale and...           0.0000
+4  "My persona will never be that of a wallflower...           0.0000
+                                                 content  vader_sentiment
+43347  Joe Biden was a TOTAL FAILURE in Government. H...          -0.7469
+43348  Will be interviewed on @ seanhannity tonight a...           0.5411
+43349                         pic.twitter.com/3lm1spbU8X           0.0000
+43350                         pic.twitter.com/vpCE5MadUz           0.0000
+43351                         pic.twitter.com/VLlc0BHW41           0.0000</code></pre>
+</div>
+</div>
+<div id="cell-18" class="cell" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># There is no point analyzing the rows that contain pic.twitter.com  can't do much with that.</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of rows containing 'pic.twitter.com'</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">str</span>.contains(<span class="st">'pic.twitter.com'</span>).<span class="bu">sum</span>()</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of rows containing 'pic.twitter.com': </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of rows containing 'pic.twitter.com': 3685</code></pre>
+</div>
+</div>
+<div id="cell-19" class="cell" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#let's delete the rows containing 'pic.twitter.com'</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets <span class="op">=</span> df_trump_tweets[<span class="op">~</span>df_trump_tweets[<span class="st">'content'</span>].<span class="bu">str</span>.contains(<span class="st">'pic.twitter.com'</span>)]  </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">str</span>.contains(<span class="st">'pic.twitter.com'</span>).<span class="bu">sum</span>()</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of rows containing 'pic.twitter.com': </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets.info())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of rows containing 'pic.twitter.com': 0
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 39667 entries, 0 to 43348
+Data columns (total 11 columns):
+ #   Column           Non-Null Count  Dtype         
+---  ------           --------------  -----         
+ 0   id               39667 non-null  int64         
+ 1   link             39667 non-null  object        
+ 2   content          39667 non-null  object        
+ 3   date             39667 non-null  datetime64[ns]
+ 4   retweets         39667 non-null  int64         
+ 5   favorites        39667 non-null  int64         
+ 6   mentions         19216 non-null  object        
+ 7   hashtags         4116 non-null   object        
+ 8   year             39667 non-null  int32         
+ 9   tweet_length     39667 non-null  int64         
+ 10  vader_sentiment  39667 non-null  float64       
+dtypes: datetime64[ns](1), float64(1), int32(1), int64(4), object(4)
+memory usage: 3.5+ MB
+None</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Load the article text into a trained <code>spaCy</code> pipeline, and determine the 5 most frequent tokens (converted to lower case). Print the common tokens with an appropriate label. Additionally, print the tokens their frequencies (with appropriate labels)</li>
+</ol>
+<div id="cell-21" class="cell" data-execution_count="76">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the English model</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate all text in the 'content' column</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>all_text <span class="op">=</span> <span class="st">' '</span>.join(df_trump_tweets[<span class="st">'content'</span>].astype(<span class="bu">str</span>).tolist())</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the length of the text</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>text_length <span class="op">=</span> <span class="bu">len</span>(all_text)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Text length: </span><span class="sc">{</span>text_length<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Increase the max_length limit</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>nlp.max_length <span class="op">=</span> text_length <span class="op">+</span> <span class="dv">1000</span>  <span class="co"># Adding a buffer to the length</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Process the text with spacy</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> nlp(all_text)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract tokens, convert to lower case, and filter out stop words and punctuation</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>tokens <span class="op">=</span> [token.text.lower() <span class="cf">for</span> token <span class="kw">in</span> doc <span class="cf">if</span> <span class="kw">not</span> token.is_stop <span class="kw">and</span> <span class="kw">not</span> token.is_punct]</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the five most common tokens</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>token_freq <span class="op">=</span> Counter(tokens).most_common(<span class="dv">5</span>)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the five most common tokens and their frequencies</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> token, freq <span class="kw">in</span> token_freq:</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Token: </span><span class="sc">{</span>token<span class="sc">}</span><span class="ss">, Frequency: </span><span class="sc">{</span>freq<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Text length: 5272985
+Token: realdonaldtrump, Frequency: 8402
+Token: great, Frequency: 6033
+Token: trump, Frequency: 5541
+Token: president, Frequency: 2851
+Token: people, Frequency: 2568</code></pre>
+</div>
+</div>
+<ol start="4" type="1">
+<li>Load the article text into a trained <code>spaCy</code> pipeline, and determine the 5 most frequent lemmas (converted to lower case). Print the common lemmas with an appropriate label. Additionally, print the lemmas with their frequencies (with appropriate labels).</li>
+</ol>
+<div id="cell-23" class="cell" data-execution_count="77">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the English model</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate all text in the 'content' column</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>all_text <span class="op">=</span> <span class="st">' '</span>.join(df_trump_tweets[<span class="st">'content'</span>].astype(<span class="bu">str</span>).tolist())</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the length of the text</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>text_length <span class="op">=</span> <span class="bu">len</span>(all_text)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Text length: </span><span class="sc">{</span>text_length<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Increase the max_length limit</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>nlp.max_length <span class="op">=</span> text_length <span class="op">+</span> <span class="dv">1000</span>  <span class="co"># Adding a buffer to the length</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Process the text with spacy</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> nlp(all_text)</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract lemmas, convert to lower case, and filter out stop words and punctuation</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>lemmas <span class="op">=</span> [token.lemma_.lower() <span class="cf">for</span> token <span class="kw">in</span> doc <span class="cf">if</span> <span class="kw">not</span> token.is_stop <span class="kw">and</span> <span class="kw">not</span> token.is_punct]</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the five most common lemmas</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>lemma_freq <span class="op">=</span> Counter(lemmas).most_common(<span class="dv">5</span>)</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the five most common lemmas and their frequencies</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lemma, freq <span class="kw">in</span> lemma_freq:</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Lemma: </span><span class="sc">{</span>lemma<span class="sc">}</span><span class="ss">, Frequency: </span><span class="sc">{</span>freq<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Text length: 5272985
+Lemma: realdonaldtrump, Frequency: 8402
+Lemma: great, Frequency: 6342
+Lemma: trump, Frequency: 5575
+Lemma: thank, Frequency: 4149
+Lemma: president, Frequency: 2907</code></pre>
+</div>
+</div>
+<ol start="5" type="1">
+<li>Make a list containing the scores (using tokens) of every sentence in the article, and plot a histogram with appropriate titles and axis labels of the scores. From your histogram, what seems to be the most common range of scores (put the answer in a comment after your code)?</li>
+</ol>
+<div id="cell-25" class="cell" data-execution_count="78">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> vaderSentiment.vaderSentiment <span class="im">import</span> SentimentIntensityAnalyzer</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the English model</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the VADER sentiment analyzer</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>analyzer <span class="op">=</span> SentimentIntensityAnalyzer()</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate sentiment score for a given text using tokens</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_token_score(text):</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> nlp(text)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    token_scores <span class="op">=</span> [analyzer.polarity_scores(token.text)[<span class="st">'compound'</span>] <span class="cf">for</span> token <span class="kw">in</span> doc <span class="cf">if</span> <span class="kw">not</span> token.is_stop <span class="kw">and</span> <span class="kw">not</span> token.is_punct]</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">sum</span>(token_scores) <span class="op">/</span> <span class="bu">len</span>(token_scores) <span class="cf">if</span> token_scores <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate sentiment score for a given text using lemmas</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lemma_score(text):</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> nlp(text)</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>    lemma_scores <span class="op">=</span> [analyzer.polarity_scores(token.lemma_)[<span class="st">'compound'</span>] <span class="cf">for</span> token <span class="kw">in</span> doc <span class="cf">if</span> <span class="kw">not</span> token.is_stop <span class="kw">and</span> <span class="kw">not</span> token.is_punct]</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">sum</span>(lemma_scores) <span class="op">/</span> <span class="bu">len</span>(lemma_scores) <span class="cf">if</span> lemma_scores <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the functions to the 'content' column and create new columns 'token_score' and 'lemma_score'</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'token_score'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">apply</span>(get_token_score)</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'lemma_score'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">apply</span>(get_lemma_score)</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the DataFrame with the new columns</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets[[<span class="st">'content'</span>, <span class="st">'token_score'</span>, <span class="st">'lemma_score'</span>]].head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             content  token_score  lemma_score
+0  Be sure to tune in and watch Donald Trump on L...     0.026517     0.026517
+1  Donald Trump will be appearing on The View tom...     0.068614     0.068614
+2  Donald Trump reads Top Ten Financial Tips on L...     0.044040     0.044040
+3  New Blog Post: Celebrity Apprentice Finale and...     0.000000     0.000000
+4  "My persona will never be that of a wallflower...     0.000000     0.000000</code></pre>
+</div>
+</div>
+<div id="cell-26" class="cell" data-execution_count="79">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the histogram of the token_score column</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>plt.hist(df_trump_tweets[<span class="st">'token_score'</span>], bins<span class="op">=</span><span class="dv">20</span>, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Histogram of Token Scores'</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Token Score'</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frequency'</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-27" class="cell" data-execution_count="80">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate statistics for the 'token_score' column</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>mean_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].mean()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>median_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].median()</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>mode_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].mode()[<span class="dv">0</span>]  <span class="co"># mode() returns a Series, take the first value</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>max_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].<span class="bu">max</span>()</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>min_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].<span class="bu">min</span>()</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>range_score <span class="op">=</span> max_score <span class="op">-</span> min_score</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>std_deviation_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].std()</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the statistics</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean: </span><span class="sc">{</span>mean_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Median: </span><span class="sc">{</span>median_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mode: </span><span class="sc">{</span>mode_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max: </span><span class="sc">{</span>max_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Min: </span><span class="sc">{</span>min_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Range: </span><span class="sc">{</span>range_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Standard Deviation: </span><span class="sc">{</span>std_deviation_score<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mean: 0.03968927391214934
+Median: 0.02848
+Mode: 0.0
+Max: 0.52235
+Min: -0.4404
+Range: 0.96275
+Standard Deviation: 0.08696466991534824</code></pre>
+</div>
+</div>
+<ol start="6" type="1">
+<li>Make a list containing the scores (using lemmas) of every sentence in the article, and plot a histogram with appropriate titles and axis labels of the scores. From your histogram, what seems to be the most common range of scores (put the answer in a comment after your code)?</li>
+</ol>
+<div id="cell-29" class="cell" data-execution_count="81">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lemma score was calculated in a previous step.  No reason to recalculate here.</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the histogram of the lemma_score column</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>plt.hist(df_trump_tweets[<span class="st">'lemma_score'</span>], bins<span class="op">=</span><span class="dv">20</span>, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Histogram of Lemma Scores'</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Lemma Score'</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frequency'</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-30" class="cell" data-execution_count="82">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate statistics for the 'lemma_score' column</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>mean_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].mean()</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>median_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].median()</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>mode_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].mode()[<span class="dv">0</span>]  <span class="co"># mode() returns a Series, take the first value</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>max_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].<span class="bu">max</span>()</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>min_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].<span class="bu">min</span>()</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>range_score <span class="op">=</span> max_score <span class="op">-</span> min_score</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>std_deviation_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].std()</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the statistics</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean: </span><span class="sc">{</span>mean_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Median: </span><span class="sc">{</span>median_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mode: </span><span class="sc">{</span>mode_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max: </span><span class="sc">{</span>max_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Min: </span><span class="sc">{</span>min_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Range: </span><span class="sc">{</span>range_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Standard Deviation: </span><span class="sc">{</span>std_deviation_score<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mean: 0.0386645034520253
+Median: 0.028478571428571426
+Mode: 0.0
+Max: 0.52235
+Min: -0.4404
+Range: 0.96275
+Standard Deviation: 0.08541845257232926</code></pre>
+</div>
+</div>
+<ol start="7" type="1">
+<li>Using the histograms from questions 5 and 6, decide a “cutoff” score for tokens and lemmas such that fewer than half the sentences would have a score greater than the cutoff score. Record the scores in this Markdown cell</li>
+</ol>
+<ul>
+<li>Cutoff Score (tokens):</li>
+<li>Cutoff Score (lemmas):</li>
+</ul>
+<p>Feel free to change these scores as you generate your summaries. Ideally, we’re shooting for at least 6 sentences for our summary, but don’t want more than 10 (these numbers are rough estimates; they depend on the length of your article).</p>
+<p>The median is the value that defines the cutoff score if we want to divide the data into two equal parts. In this case, we want to divide the data into two parts such that fewer than half the sentences would have a score greater than the cutoff score. This means that the median is good starting point for the cutoff score.</p>
+<div id="cell-32" class="cell" data-execution_count="83">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the median cutoff scores using the existing 'token_score' and 'lemma_score' columns</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>token_cutoff_score <span class="op">=</span> df_trump_tweets[<span class="st">'token_score'</span>].median()</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>lemma_cutoff_score <span class="op">=</span> df_trump_tweets[<span class="st">'lemma_score'</span>].median()</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the cutoff scores</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Token Cutoff Score: </span><span class="sc">{</span>token_cutoff_score<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lemma Cutoff Score: </span><span class="sc">{</span>lemma_cutoff_score<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Token Cutoff Score: 0.02848
+Lemma Cutoff Score: 0.028478571428571426</code></pre>
+</div>
+</div>
+<ol start="8" type="1">
+<li>Create a summary of the article by going through every sentence in the article and adding it to an (initially) empty list if its score (based on tokens) is greater than the cutoff score you identified in question 8. If your loop variable is named <code>sent</code>, you may find it easier to add <code>sent.text.strip()</code> to your list of sentences. Print the summary (I would cleanly generate the summary text by <code>join</code>ing the strings in your list together with a space (<code>' '.join(sentence_list)</code>).</li>
+</ol>
+<p>Creating a summary of the 40 thousand trump tweets seemed like a daunting task, so I decided to summarize each month’s tweets. The cell below is meant to create the summaries for each month. Each summary is expected to be 1-2 sentences in length. I will apply the cutoff scores to the summaries that are created after all of the summaries are produced and the polarity scores are calculated in step 9. I am doing this as I want to spend some time at the end doing my own exploration. I would like summaries and scores for the whole dataset.</p>
+<div id="cell-35" class="cell" data-execution_count="84">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline, AutoTokenizer</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the device to CPU </span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># When set to GPU I encountered numerous errors.  I am not sure why.  I am using a GPU</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify the model to use for summarization</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"sshleifer/distilbart-cnn-12-6"</span>  <span class="co"># You can change this to any other model</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the summarization pipeline with the specified model and device</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>summarizer <span class="op">=</span> pipeline(<span class="st">"summarization"</span>, model<span class="op">=</span>model_name, device<span class="op">=</span>device)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the tokenizer with the same model</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(model_name)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to summarize text</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize_text(text):</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(text.strip()) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"No content to summarize"</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Truncate the text to the maximum sequence length</span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>    inputs <span class="op">=</span> tokenizer(text, max_length<span class="op">=</span><span class="dv">1024</span>, truncation<span class="op">=</span><span class="va">True</span>, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>    truncated_text <span class="op">=</span> tokenizer.decode(inputs[<span class="st">"input_ids"</span>][<span class="dv">0</span>], skip_special_tokens<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summarize the truncated text using the transformer model</span></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>    summary <span class="op">=</span> summarizer(truncated_text, max_length<span class="op">=</span><span class="dv">31</span>, min_length<span class="op">=</span><span class="dv">25</span>, do_sample<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> summary[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'date' column is in datetime format</span></span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweets[<span class="st">'date'</span>])</span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract month and year from the 'date' column</span></span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'month'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.month</span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'year'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.year</span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by year and month</span></span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>grouped <span class="op">=</span> df_trump_tweets.groupby([<span class="st">'year'</span>, <span class="st">'month'</span>])</span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new DataFrame to store the summaries</span></span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>summaries <span class="op">=</span> []</span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (year, month), group <span class="kw">in</span> grouped:</span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Concatenate all text in the group</span></span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>    all_text <span class="op">=</span> <span class="st">' '</span>.join(group[<span class="st">'content'</span>].astype(<span class="bu">str</span>).tolist())</span>
+<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(all_text.strip()) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summarize the concatenated text</span></span>
+<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>    summary <span class="op">=</span> summarize_text(all_text)</span>
+<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>    summaries.append({<span class="st">'year'</span>: year, <span class="st">'month'</span>: month, <span class="st">'summary'</span>: summary})</span>
+<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the new DataFrame</span></span>
+<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries <span class="op">=</span> pd.DataFrame(summaries)</span>
+<span id="cb36-53"><a href="#cb36-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the new DataFrame</span></span>
+<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweet_summaries.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   year  month                                            summary
+0  2009      5   Donald Trump presents the Top Ten List on Lat...
+1  2009      6   Today is Donald Trump's Birthday! Send him yo...
+2  2009      7   "Be aware of things that seem inexplicable be...
+3  2009      8   Watch Donald Trump's recent appearance on The...
+4  2009      9   "A lot of people have imagination, but can't ...</code></pre>
+</div>
+</div>
+<ol start="9" type="1">
+<li>Print the polarity score of your summary you generated with the token scores (with an appropriate label). Additionally, print the number of sentences in the summarized article.</li>
+</ol>
+<div id="cell-37" class="cell" data-execution_count="85">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the VADER sentiment analyzer</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>analyzer <span class="op">=</span> SentimentIntensityAnalyzer()</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the English model for sentence segmentation</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate VADER sentiment score</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_vader_score(text):</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> analyzer.polarity_scores(text)[<span class="st">'compound'</span>]</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to count the number of sentences</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_sentences(text):</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> nlp(text)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">len</span>(<span class="bu">list</span>(doc.sents))</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the functions to the 'summary' column and create new columns 'vader_score' and 'number_of_sentences'</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'vader_score'</span>] <span class="op">=</span> df_trump_tweet_summaries[<span class="st">'summary'</span>].<span class="bu">apply</span>(get_vader_score)</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'number_of_sentences'</span>] <span class="op">=</span> df_trump_tweet_summaries[<span class="st">'summary'</span>].<span class="bu">apply</span>(count_sentences)</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweet_summaries.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   year  month                                            summary  \
+0  2009      5   Donald Trump presents the Top Ten List on Lat...   
+1  2009      6   Today is Donald Trump's Birthday! Send him yo...   
+2  2009      7   "Be aware of things that seem inexplicable be...   
+3  2009      8   Watch Donald Trump's recent appearance on The...   
+4  2009      9   "A lot of people have imagination, but can't ...   
+
+   vader_score  number_of_sentences  
+0       0.2023                    2  
+1       0.5848                    2  
+2       0.8402                    1  
+3       0.0000                    1  
+4       0.0000                    2  </code></pre>
+</div>
+</div>
+<ol start="10" type="1">
+<li>Create a summary of the article by going through every sentence in the article and adding it to an (initially) empty list if its score (based on lemmas) is greater than the cutoff score you identified in question 8. If your loop variable is named <code>sent</code>, you may find it easier to add <code>sent.text.strip()</code> to your list of sentences. Print the summary (I would cleanly generate the summary text by <code>join</code>ing the strings in your list together with a space (<code>' '.join(sentence_list)</code>).</li>
+</ol>
+<p>lemmatize first and then summarize is the strategy. Relying on GitHub Copilot to help figure this out. Transformers does not have the ability to lemmatize. I will need to use spaCy for this task. I will need to load the spaCy model and then lemmatize the text. I will then need to calculate the scores for the lemmatized text. I will then need to summarize the text based on the scores.</p>
+<div id="cell-40" class="cell" data-execution_count="86">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the spacy model for lemmatization</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the device to CPU</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify the model to use for summarization</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"sshleifer/distilbart-cnn-12-6"</span>  <span class="co"># You can change this to any other model</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the summarization pipeline with the specified model and device</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>summarizer <span class="op">=</span> pipeline(<span class="st">"summarization"</span>, model<span class="op">=</span>model_name, device<span class="op">=</span>device)</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the tokenizer with the same model</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(model_name)</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to lemmatize text</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lemmatize_text(text):</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> nlp(text)</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([token.lemma_ <span class="cf">for</span> token <span class="kw">in</span> doc <span class="cf">if</span> <span class="kw">not</span> token.is_stop <span class="kw">and</span> <span class="kw">not</span> token.is_punct])</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to summarize text</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize_text(text):</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(text.strip()) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"No content to summarize"</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Truncate the text to the maximum sequence length</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>    inputs <span class="op">=</span> tokenizer(text, max_length<span class="op">=</span><span class="dv">1000</span>, truncation<span class="op">=</span><span class="va">True</span>, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> inputs[<span class="st">"input_ids"</span>].size(<span class="dv">1</span>) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"No content to summarize"</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>    truncated_text <span class="op">=</span> tokenizer.decode(inputs[<span class="st">"input_ids"</span>][<span class="dv">0</span>], skip_special_tokens<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summarize the truncated text using the transformer model</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>    summary <span class="op">=</span> summarizer(truncated_text, max_length<span class="op">=</span><span class="dv">31</span>, min_length<span class="op">=</span><span class="dv">25</span>, do_sample<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> summary[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'date' column is in datetime format</span></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweets[<span class="st">'date'</span>])</span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract month and year from the 'date' column</span></span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'month'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.month</span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'year'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.year</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Lemmatize each tweet in the 'content' column</span></span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'lemmatized_content'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">apply</span>(lemmatize_text)</span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by year and month</span></span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>grouped <span class="op">=</span> df_trump_tweets.groupby([<span class="st">'year'</span>, <span class="st">'month'</span>])</span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a list to store the lemmatized summaries</span></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>lemma_summaries <span class="op">=</span> []</span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (year, month), group <span class="kw">in</span> grouped:</span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Concatenate all lemmatized text in the group</span></span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a>    all_lemmatized_text <span class="op">=</span> <span class="st">' '</span>.join(group[<span class="st">'lemmatized_content'</span>].astype(<span class="bu">str</span>).tolist())</span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(all_lemmatized_text.strip()) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summarize the lemmatized text</span></span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a>    lemma_summary <span class="op">=</span> summarize_text(all_lemmatized_text)</span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a>    lemma_summaries.append({<span class="st">'year'</span>: year, <span class="st">'month'</span>: month, <span class="st">'lemma_summary'</span>: lemma_summary})</span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the new DataFrame for lemma summaries</span></span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a>df_lemma_summaries <span class="op">=</span> pd.DataFrame(lemma_summaries)</span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the lemma summaries with the existing df_trump_tweet_summaries DataFrame</span></span>
+<span id="cb40-65"><a href="#cb40-65" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries <span class="op">=</span> pd.merge(df_trump_tweet_summaries, df_lemma_summaries, on<span class="op">=</span>[<span class="st">'year'</span>, <span class="st">'month'</span>], how<span class="op">=</span><span class="st">'outer'</span>)</span>
+<span id="cb40-66"><a href="#cb40-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-67"><a href="#cb40-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame</span></span>
+<span id="cb40-68"><a href="#cb40-68" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweet_summaries.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   year  month                                            summary  \
+0  2009      5   Donald Trump presents the Top Ten List on Lat...   
+1  2009      6   Today is Donald Trump's Birthday! Send him yo...   
+2  2009      7   "Be aware of things that seem inexplicable be...   
+3  2009      8   Watch Donald Trump's recent appearance on The...   
+4  2009      9   "A lot of people have imagination, but can't ...   
+
+   vader_score  number_of_sentences  \
+0       0.2023                    2   
+1       0.5848                    2   
+2       0.8402                    1   
+3       0.0000                    1   
+4       0.0000                    2   
+
+                                       lemma_summary  
+0   Celebrity Apprentice Finale Lessons learn way...  
+1   Check Donald Trump new iGoogle Showcase page ...  
+2   Donald Trump back apprentice Randal Pinkett N...  
+3   Watch Donald Trump recent appearance Late Dav...  
+4   Hilarious DSRL video feature Donald Trump . R...  </code></pre>
+</div>
+</div>
+<ol start="11" type="1">
+<li>Print the polarity score of your summary you generated with the lemma scores (with an appropriate label). Additionally, print the number of sentences in the summarized article.</li>
+</ol>
+<div id="cell-42" class="cell" data-execution_count="87">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the VADER sentiment analyzer</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>analyzer <span class="op">=</span> SentimentIntensityAnalyzer()</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the English model for sentence segmentation</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate VADER sentiment score</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_vader_score(text):</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> analyzer.polarity_scores(text)[<span class="st">'compound'</span>]</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to count the number of sentences</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_sentences(text):</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> nlp(text)</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">len</span>(<span class="bu">list</span>(doc.sents))</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the functions to the 'lemma_summary' column and create new columns 'lemma_score' and 'lemma_number_of_sentences'</span></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'lemma_score'</span>] <span class="op">=</span> df_trump_tweet_summaries[<span class="st">'lemma_summary'</span>].<span class="bu">apply</span>(get_vader_score)</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'lemma_number_of_sentences'</span>] <span class="op">=</span> df_trump_tweet_summaries[<span class="st">'lemma_summary'</span>].<span class="bu">apply</span>(count_sentences)</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweet_summaries.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   year  month                                            summary  \
+0  2009      5   Donald Trump presents the Top Ten List on Lat...   
+1  2009      6   Today is Donald Trump's Birthday! Send him yo...   
+2  2009      7   "Be aware of things that seem inexplicable be...   
+3  2009      8   Watch Donald Trump's recent appearance on The...   
+4  2009      9   "A lot of people have imagination, but can't ...   
+
+   vader_score  number_of_sentences  \
+0       0.2023                    2   
+1       0.5848                    2   
+2       0.8402                    1   
+3       0.0000                    1   
+4       0.0000                    2   
+
+                                       lemma_summary  lemma_score  \
+0   Celebrity Apprentice Finale Lessons learn way...       0.0000   
+1   Check Donald Trump new iGoogle Showcase page ...      -0.4767   
+2   Donald Trump back apprentice Randal Pinkett N...       0.3818   
+3   Watch Donald Trump recent appearance Late Dav...      -0.1531   
+4   Hilarious DSRL video feature Donald Trump . R...       0.7506   
+
+   lemma_number_of_sentences  
+0                          1  
+1                          1  
+2                          2  
+3                          3  
+4                          2  </code></pre>
+</div>
+</div>
+<ol start="12" type="1">
+<li>Compare your polarity scores of your summaries to the polarity scores of the initial article. Is there a difference? Why do you think that may or may not be?. Answer in this Markdown cell.</li>
+</ol>
+<div id="cell-44" class="cell" data-execution_count="88">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'year' and 'month' columns are combined into a datetime column for plotting</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweet_summaries[[<span class="st">'year'</span>, <span class="st">'month'</span>]].assign(day<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort the DataFrame by date</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries <span class="op">=</span> df_trump_tweet_summaries.sort_values(<span class="st">'date'</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the vader_score and lemma_score over time</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>plt.plot(df_trump_tweet_summaries[<span class="st">'date'</span>], df_trump_tweet_summaries[<span class="st">'vader_score'</span>], label<span class="op">=</span><span class="st">'VADER Score'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>plt.plot(df_trump_tweet_summaries[<span class="st">'date'</span>], df_trump_tweet_summaries[<span class="st">'lemma_score'</span>], label<span class="op">=</span><span class="st">'Lemma Score'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'VADER Score and Lemma Score Over Time'</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Date'</span>)</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Score'</span>)</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Well that graph is definitely difficult to read. Let’s try something different.</p>
+<p>Let’s try a scatter plot for vader token score vs lemma score An insight that I am not going to go back and fix. I should have named vader score token score.</p>
+<div id="cell-46" class="cell" data-execution_count="89">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a scatter plot comparing vader_score and lemma_score</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>plt.scatter(df_trump_tweet_summaries[<span class="st">'vader_score'</span>], df_trump_tweet_summaries[<span class="st">'lemma_score'</span>], alpha<span class="op">=</span><span class="fl">0.6</span>, edgecolors<span class="op">=</span><span class="st">'w'</span>, s<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Scatter Plot of VADER Score vs Lemma Score'</span>)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'VADER Score'</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Lemma Score'</span>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>well that does not help much either. The lemma scores are quite different from the vader token score. let’s go back to the time based plot and try looking at the difference between the token and lemma score for each month</p>
+<div id="cell-48" class="cell" data-execution_count="90">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'year' and 'month' columns are combined into a datetime column for plotting</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweet_summaries[[<span class="st">'year'</span>, <span class="st">'month'</span>]].assign(day<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort the DataFrame by date</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries <span class="op">=</span> df_trump_tweet_summaries.sort_values(<span class="st">'date'</span>)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the absolute difference between vader_score and lemma_score</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>df_trump_tweet_summaries[<span class="st">'abs_diff'</span>] <span class="op">=</span> (df_trump_tweet_summaries[<span class="st">'vader_score'</span>] <span class="op">-</span> df_trump_tweet_summaries[<span class="st">'lemma_score'</span>]).<span class="bu">abs</span>()</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the absolute difference over time</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>plt.plot(df_trump_tweet_summaries[<span class="st">'date'</span>], df_trump_tweet_summaries[<span class="st">'abs_diff'</span>], label<span class="op">=</span><span class="st">'Absolute Difference'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Absolute Difference Between VADER Score and Lemma Score Over Time'</span>)</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Date'</span>)</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Absolute Difference'</span>)</span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Well that is not very helpful either. There are definite differences in the scores. Before I answer question 13, I am going to do some more exploration. I am not very confident that there is much value in the summarizing of trumps tweets by month. I suspect that that is the source of the wildly different values above. I purposefully kept the Trump Tweets dataframe separate from the summary dataframe so I could examine the trump tweets in other ways. Let’s go back to the trump tweets dataframe. Here’s the first few rows again in case you forgot.</p>
+<div id="cell-50" class="cell" data-execution_count="91">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           id                                               link  \
+0  1698308935  https://twitter.com/realDonaldTrump/status/169...   
+1  1701461182  https://twitter.com/realDonaldTrump/status/170...   
+2  1737479987  https://twitter.com/realDonaldTrump/status/173...   
+3  1741160716  https://twitter.com/realDonaldTrump/status/174...   
+4  1773561338  https://twitter.com/realDonaldTrump/status/177...   
+
+                                             content                date  \
+0  Be sure to tune in and watch Donald Trump on L... 2009-05-04 13:54:25   
+1  Donald Trump will be appearing on The View tom... 2009-05-04 20:00:10   
+2  Donald Trump reads Top Ten Financial Tips on L... 2009-05-08 08:38:08   
+3  New Blog Post: Celebrity Apprentice Finale and... 2009-05-08 15:40:15   
+4  "My persona will never be that of a wallflower... 2009-05-12 09:07:28   
+
+   retweets  favorites mentions hashtags  year  tweet_length  vader_sentiment  \
+0       510        917      NaN      NaN  2009           117           0.5255   
+1        34        267      NaN      NaN  2009           131           0.7712   
+2        13         19      NaN      NaN  2009           116           0.6468   
+3        11         26      NaN      NaN  2009           103           0.0000   
+4      1375       1945      NaN      NaN  2009           109           0.0000   
+
+   token_score  lemma_score  month  \
+0     0.026517     0.026517      5   
+1     0.068614     0.068614      5   
+2     0.044040     0.044040      5   
+3     0.000000     0.000000      5   
+4     0.000000     0.000000      5   
+
+                                  lemmatized_content  
+0  sure tune watch Donald Trump Late Night David ...  
+1  Donald Trump appear view tomorrow morning disc...  
+2  Donald Trump read Financial Tips Late David Le...  
+3  New Blog Post Celebrity Apprentice Finale Less...  
+4  persona wallflower build wall cle --Donald J. ...  </code></pre>
+</div>
+</div>
+<div id="cell-51" class="cell" data-execution_count="92">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the 'date' column is in datetime format</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df_trump_tweets[<span class="st">'date'</span>])</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract month and year from the 'date' column</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'month'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.month</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'year'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'date'</span>].dt.year</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by year and month and calculate the average token_score and lemma_score</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>monthly_scores <span class="op">=</span> df_trump_tweets.groupby([<span class="st">'year'</span>, <span class="st">'month'</span>]).agg({</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'token_score'</span>: <span class="st">'mean'</span>,</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'lemma_score'</span>: <span class="st">'mean'</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>}).reset_index()</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the 'year' and 'month' columns into a single 'date' column for plotting</span></span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>monthly_scores[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(monthly_scores[[<span class="st">'year'</span>, <span class="st">'month'</span>]].assign(day<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort the DataFrame by date</span></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>monthly_scores <span class="op">=</span> monthly_scores.sort_values(<span class="st">'date'</span>)</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the token_score and lemma_score over time</span></span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>plt.plot(monthly_scores[<span class="st">'date'</span>], monthly_scores[<span class="st">'token_score'</span>], label<span class="op">=</span><span class="st">'Token Score'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a>plt.plot(monthly_scores[<span class="st">'date'</span>], monthly_scores[<span class="st">'lemma_score'</span>], label<span class="op">=</span><span class="st">'Lemma Score'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Token Score and Lemma Score Over Time'</span>)</span>
+<span id="cb49-27"><a href="#cb49-27" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Date'</span>)</span>
+<span id="cb49-28"><a href="#cb49-28" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Score'</span>)</span>
+<span id="cb49-29"><a href="#cb49-29" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb49-32"><a href="#cb49-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-33"><a href="#cb49-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb49-34"><a href="#cb49-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-31-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot is calculating the mean of the vader token score and the vader lemma score for each month. The plot above meets my expectations that the scores should not differ markedly. Thus, I suspect that something went wrong with the summarizing process.</p>
+<p>Could it be that the topic of Trump’s tweets varys a lot during the course of a month? Could the summarizing process be missing the mark because of this? If the topics are wildly different, then I would expect summarizing to also be difficult. Whereas looking at the scores without summarizing, we see similarities.</p>
+<p>It seems pointless to summarize tweets that are only a couple of sentences long. And grouping them together also seems to present a challenge for summarizing as there is likely several different topics involved in the tweets.</p>
+<ol start="13" type="1">
+<li>Based on your reading of the original article, which summary do you think is better (if there’s a difference). Why do you think this might be?</li>
+</ol>
+<p>I am not sure if I can answer this question. I am not sure if the summaries are of any value. Creating the summaries seemed to create data that yielded no value. The token and lemma scores from the original data were of more value. However, I cannot make a determination of whether the lemma approach or the token is approach is superior.</p>
+<p>I suspect that the problem with summarizing this data is that the tweets in the initial dataset are of numerous different topics. The tweets span from when Trump had his own reality show until Biden’s election. Thus, the summaries from the tokens and the lemmas can result in very different results. I suspect that the summaries would be more useful if the tweets were grouped by topic. I wonder how transformer would classify the tweets. I’ll keep that in the back of my mind for future exploration.</p>
+<p>Now, I have a few things that I want to explore using the original data. I am curious about whether the content of the dataset can show a correlation with whether the tweet will be retweeted.</p>
+<p>let’s start by dropping the columns that are not needed</p>
+<div id="cell-55" class="cell" data-execution_count="93">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a copy of the df_trump_tweets DataFrame</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_predict <span class="op">=</span> df_trump_tweets.copy()</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop the specified columns from the new DataFrame</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>columns_to_drop <span class="op">=</span> [<span class="st">'id'</span>, <span class="st">'link'</span>, <span class="st">'month'</span>, <span class="st">'year'</span>, <span class="st">'lemmatized_content'</span>, <span class="st">'mentions'</span>, <span class="st">'hashtags'</span>, <span class="st">'content'</span>]</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_predict <span class="op">=</span> df_trump_tweets_predict.drop(columns<span class="op">=</span>columns_to_drop)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the new DataFrame</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets_predict.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 date  retweets  favorites  tweet_length  vader_sentiment  \
+0 2009-05-04 13:54:25       510        917           117           0.5255   
+1 2009-05-04 20:00:10        34        267           131           0.7712   
+2 2009-05-08 08:38:08        13         19           116           0.6468   
+3 2009-05-08 15:40:15        11         26           103           0.0000   
+4 2009-05-12 09:07:28      1375       1945           109           0.0000   
+
+   token_score  lemma_score  
+0     0.026517     0.026517  
+1     0.068614     0.068614  
+2     0.044040     0.044040  
+3     0.000000     0.000000  
+4     0.000000     0.000000  </code></pre>
+</div>
+</div>
+<div id="cell-56" class="cell" data-execution_count="94">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the correlation matrix</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> df_trump_tweets_predict.corr()</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a heatmap</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>))</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>sns.heatmap(correlation_matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'coolwarm'</span>, linewidths<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Heatmap of Correlations in df_trump_tweets_predict'</span>)</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-33-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>No surprises with the heatmap. There’s a very strong correlation between token score and lemma score. There’s also a very strong score between favorites and retweets. This doesn’t seem very surprising. Let’s try something different.</p>
+<div id="cell-58" class="cell" data-execution_count="95">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the text classification pipeline with a pre-trained model</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>classifier <span class="op">=</span> pipeline(<span class="st">"text-classification"</span>, model<span class="op">=</span><span class="st">"bhadresh-savani/distilbert-base-uncased-emotion"</span>)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to classify a tweet</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_tweet(text):</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    classification <span class="op">=</span> classifier(text)</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> classification[<span class="dv">0</span>][<span class="st">'label'</span>]</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the classification function to the 'content' column and create a new column 'pipeline_classification'</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>df_trump_tweets[<span class="st">'pipeline_classification'</span>] <span class="op">=</span> df_trump_tweets[<span class="st">'content'</span>].<span class="bu">apply</span>(classify_tweet)</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame</span></span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets[[<span class="st">'content'</span>, <span class="st">'pipeline_classification'</span>]].head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             content pipeline_classification
+0  Be sure to tune in and watch Donald Trump on L...                     joy
+1  Donald Trump will be appearing on The View tom...                     joy
+2  Donald Trump reads Top Ten Financial Tips on L...                surprise
+3  New Blog Post: Celebrity Apprentice Finale and...                     joy
+4  "My persona will never be that of a wallflower...                   anger</code></pre>
+</div>
+</div>
+<p>Now that is interesting. I wonder what I can do with those. Let’s look at how many unique values there are in the new column</p>
+<div id="cell-60" class="cell" data-execution_count="96">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the unique values and their counts in the 'pipeline_classification' column</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>classification_counts <span class="op">=</span> df_trump_tweets[<span class="st">'pipeline_classification'</span>].value_counts()</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the number of unique values</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of unique values in 'pipeline_classification': </span><span class="sc">{</span>classification_counts<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the counts of each unique value</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_counts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of unique values in 'pipeline_classification': 6
+pipeline_classification
+joy         24417
+anger       10453
+sadness      3208
+fear          886
+love          386
+surprise      317
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<div id="cell-61" class="cell" data-execution_count="97">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the OneHotEncoder</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>encoder <span class="op">=</span> OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit and transform the 'pipeline_classification' column</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>one_hot_encoded <span class="op">=</span> encoder.fit_transform(df_trump_tweets[[<span class="st">'pipeline_classification'</span>]])</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DataFrame with the one-hot encoded columns</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>one_hot_encoded_df <span class="op">=</span> pd.DataFrame(one_hot_encoded, columns<span class="op">=</span>encoder.get_feature_names_out([<span class="st">'pipeline_classification'</span>]))</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the original DataFrame with the one-hot encoded DataFrame</span></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot <span class="op">=</span> pd.concat([df_trump_tweets, one_hot_encoded_df], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop the 'month', 'year', and 'lemmatized_content' columns</span></span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot <span class="op">=</span> df_trump_tweets_one_hot.drop(columns<span class="op">=</span>[<span class="st">'month'</span>, <span class="st">'year'</span>, <span class="st">'lemmatized_content'</span>])</span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame with one-hot encoded columns</span></span>
+<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets_one_hot.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             id                                               link  \
+0  1.698309e+09  https://twitter.com/realDonaldTrump/status/169...   
+1  1.701461e+09  https://twitter.com/realDonaldTrump/status/170...   
+2  1.737480e+09  https://twitter.com/realDonaldTrump/status/173...   
+3  1.741161e+09  https://twitter.com/realDonaldTrump/status/174...   
+4  1.773561e+09  https://twitter.com/realDonaldTrump/status/177...   
+
+                                             content                date  \
+0  Be sure to tune in and watch Donald Trump on L... 2009-05-04 13:54:25   
+1  Donald Trump will be appearing on The View tom... 2009-05-04 20:00:10   
+2  Donald Trump reads Top Ten Financial Tips on L... 2009-05-08 08:38:08   
+3  New Blog Post: Celebrity Apprentice Finale and... 2009-05-08 15:40:15   
+4  "My persona will never be that of a wallflower... 2009-05-12 09:07:28   
+
+   retweets  favorites mentions hashtags  tweet_length  vader_sentiment  \
+0     510.0      917.0      NaN      NaN         117.0           0.5255   
+1      34.0      267.0      NaN      NaN         131.0           0.7712   
+2      13.0       19.0      NaN      NaN         116.0           0.6468   
+3      11.0       26.0      NaN      NaN         103.0           0.0000   
+4    1375.0     1945.0      NaN      NaN         109.0           0.0000   
+
+   token_score  lemma_score pipeline_classification  \
+0     0.026517     0.026517                     joy   
+1     0.068614     0.068614                     joy   
+2     0.044040     0.044040                surprise   
+3     0.000000     0.000000                     joy   
+4     0.000000     0.000000                   anger   
+
+   pipeline_classification_anger  pipeline_classification_fear  \
+0                            0.0                           0.0   
+1                            0.0                           0.0   
+2                            0.0                           0.0   
+3                            0.0                           0.0   
+4                            1.0                           0.0   
+
+   pipeline_classification_joy  pipeline_classification_love  \
+0                          1.0                           0.0   
+1                          1.0                           0.0   
+2                          0.0                           0.0   
+3                          1.0                           0.0   
+4                          0.0                           0.0   
+
+   pipeline_classification_sadness  pipeline_classification_surprise  
+0                              0.0                               0.0  
+1                              0.0                               0.0  
+2                              0.0                               1.0  
+3                              0.0                               0.0  
+4                              0.0                               0.0  </code></pre>
+</div>
+</div>
+<div id="cell-62" class="cell" data-execution_count="98">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the relevant columns for the heatmap</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>columns_to_include <span class="op">=</span> [<span class="st">'retweets'</span>, <span class="st">'favorites'</span>, <span class="st">'token_score'</span>, <span class="st">'lemma_score'</span>] <span class="op">+</span> <span class="bu">list</span>(one_hot_encoded_df.columns)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>df_heatmap <span class="op">=</span> df_trump_tweets_one_hot[columns_to_include]</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the correlation matrix</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> df_heatmap.corr()</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a heatmap</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">10</span>))</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>sns.heatmap(correlation_matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'coolwarm'</span>, linewidths<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add titles and labels</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Heatmap of Correlations'</span>)</span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-37-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That is interesting. Some of the correlations make sense, like token score and lemma score. Retweets and favorites also makes a lot of sense. I wonder about the correlation between anger and joy though. It is a negative correlation, which I suppose make sense as the emotions are opposites.</p>
+<p>A note: I stopped here for a while and did some reading about vader sentiment analysis and also the transformer emotion output based on distilbert</p>
+<p>Some things that I learned. Vader does sentiment analysis; however, twitter-robertabase sentiment and twitter-robertabase emotion are specific tools for twitter data. I am curious to see how they compare. Twitter-robertabase sentiment is a binary classification of positive or negative. Twitter-robertabase emotion is a multi-class classification of 6 emotions. I am curious to see how the two compare. I am also curious to see how the two compare to vader sentiment and distillbert emotion.</p>
+<div id="cell-65" class="cell" data-execution_count="109">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the sentiment analysis pipeline with twitter-roberta-base-sentiment</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>sentiment_classifier <span class="op">=</span> pipeline(<span class="st">"sentiment-analysis"</span>, model<span class="op">=</span><span class="st">"cardiffnlp/twitter-roberta-base-sentiment"</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to classify the sentiment of a tweet</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_sentiment(text):</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> sentiment_classifier(text)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result[<span class="dv">0</span>][<span class="st">'label'</span>], result[<span class="dv">0</span>][<span class="st">'score'</span>]</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the classification function to the 'content' column and create new columns for sentiment and score</span></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot[[<span class="st">'sentiment_label'</span>, <span class="st">'sentiment_score'</span>]] <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'content'</span>].<span class="bu">apply</span>(</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: pd.Series(classify_sentiment(x))</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame</span></span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets_one_hot[[<span class="st">'content'</span>, <span class="st">'sentiment_label'</span>, <span class="st">'sentiment_score'</span>]].head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             content sentiment_label  \
+0  Be sure to tune in and watch Donald Trump on L...         LABEL_2   
+1  Donald Trump will be appearing on The View tom...         LABEL_1   
+2  Donald Trump reads Top Ten Financial Tips on L...         LABEL_2   
+3  New Blog Post: Celebrity Apprentice Finale and...         LABEL_1   
+4  "My persona will never be that of a wallflower...         LABEL_0   
+
+   sentiment_score  
+0         0.750939  
+1         0.571567  
+2         0.762436  
+3         0.862625  
+4         0.492906  </code></pre>
+</div>
+</div>
+<div id="cell-66" class="cell" data-execution_count="110">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the mapping from model labels to descriptive sentiment categories</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>label_mapping <span class="op">=</span> {</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'LABEL_0'</span>: <span class="st">'Negative'</span>,</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'LABEL_1'</span>: <span class="st">'Neutral'</span>,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'LABEL_2'</span>: <span class="st">'Positive'</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the mapping to the 'sentiment_label' column</span></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot[<span class="st">'sentiment_label'</span>] <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_label'</span>].<span class="bu">map</span>(label_mapping)</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The unique count of the sentiment labels</span></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>unique_sentiment_labels <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_label'</span>].value_counts()</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Unique count of sentiment labels:"</span>)</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(unique_sentiment_labels)</span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a><span class="co"># The statistics for the sentiment scores</span></span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>mean_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_score'</span>].mean()</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>median_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_score'</span>].median()</span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a>max_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_score'</span>].<span class="bu">max</span>()</span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a>min_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_score'</span>].<span class="bu">min</span>()</span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a>mode_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'sentiment_score'</span>].mode()[<span class="dv">0</span>]</span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the statistics</span></span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Statistics for sentiment scores:"</span>)</span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean: </span><span class="sc">{</span>mean_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Median: </span><span class="sc">{</span>median_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max: </span><span class="sc">{</span>max_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Min: </span><span class="sc">{</span>min_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mode: </span><span class="sc">{</span>mode_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unique count of sentiment labels:
+sentiment_label
+Positive    17072
+Neutral     13323
+Negative    12450
+Name: count, dtype: int64
+
+Statistics for sentiment scores:
+Mean: 0.75
+Median: 0.77
+Max: 0.99
+Min: 0.35
+Mode: 0.53</code></pre>
+</div>
+</div>
+<div id="cell-67" class="cell" data-execution_count="111">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the mapping from VADER scores to descriptive sentiment categories</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> categorize_vader_sentiment(score):</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> score <span class="op">&lt;=</span> <span class="op">-</span><span class="fl">0.05</span>:</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">'Negative'</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="fl">0.05</span>:</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">'Positive'</span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">'Neutral'</span></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the categorization to the 'toekn_score' column</span></span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot[<span class="st">'vader_sentiment_category'</span>] <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'token_score'</span>].<span class="bu">apply</span>(categorize_vader_sentiment)</span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a><span class="co"># The unique count of the VADER sentiment categories</span></span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>unique_vader_sentiment_categories <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'vader_sentiment_category'</span>].value_counts()</span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Unique count of VADER sentiment categories:"</span>)</span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(unique_vader_sentiment_categories)</span>
+<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a><span class="co"># The statistics for the VADER sentiment scores</span></span>
+<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a>mean_vader_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'token_score'</span>].mean()</span>
+<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a>median_vader_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'token_score'</span>].median()</span>
+<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a>max_vader_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'token_score'</span>].<span class="bu">max</span>()</span>
+<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a>min_vader_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'token_score'</span>].<span class="bu">min</span>()</span>
+<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a>mode_vader_sentiment_score <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'token_score'</span>].mode()[<span class="dv">0</span>]</span>
+<span id="cb64-24"><a href="#cb64-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-25"><a href="#cb64-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the statistics</span></span>
+<span id="cb64-26"><a href="#cb64-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Statistics for VADER sentiment scores:"</span>)</span>
+<span id="cb64-27"><a href="#cb64-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean: </span><span class="sc">{</span>mean_vader_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb64-28"><a href="#cb64-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Median: </span><span class="sc">{</span>median_vader_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb64-29"><a href="#cb64-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max: </span><span class="sc">{</span>max_vader_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb64-30"><a href="#cb64-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Min: </span><span class="sc">{</span>min_vader_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb64-31"><a href="#cb64-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mode: </span><span class="sc">{</span>mode_vader_sentiment_score<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unique count of VADER sentiment categories:
+vader_sentiment_category
+Neutral     22184
+Positive    15989
+Negative     4672
+Name: count, dtype: int64
+
+Statistics for VADER sentiment scores:
+Mean: 0.04
+Median: 0.03
+Max: 0.52
+Min: -0.44
+Mode: 0.00</code></pre>
+</div>
+</div>
+<div id="cell-68" class="cell" data-execution_count="112">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="112">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">link</th>
+<th data-quarto-table-cell-role="th">content</th>
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">retweets</th>
+<th data-quarto-table-cell-role="th">favorites</th>
+<th data-quarto-table-cell-role="th">mentions</th>
+<th data-quarto-table-cell-role="th">hashtags</th>
+<th data-quarto-table-cell-role="th">tweet_length</th>
+<th data-quarto-table-cell-role="th">vader_sentiment</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">pipeline_classification</th>
+<th data-quarto-table-cell-role="th">pipeline_classification_anger</th>
+<th data-quarto-table-cell-role="th">pipeline_classification_fear</th>
+<th data-quarto-table-cell-role="th">pipeline_classification_joy</th>
+<th data-quarto-table-cell-role="th">pipeline_classification_love</th>
+<th data-quarto-table-cell-role="th">pipeline_classification_sadness</th>
+<th data-quarto-table-cell-role="th">pipeline_classification_surprise</th>
+<th data-quarto-table-cell-role="th">sentiment_label</th>
+<th data-quarto-table-cell-role="th">sentiment_score</th>
+<th data-quarto-table-cell-role="th">vader_sentiment_category</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1.698309e+09</td>
+<td>https://twitter.com/realDonaldTrump/status/169...</td>
+<td>Be sure to tune in and watch Donald Trump on L...</td>
+<td>2009-05-04 13:54:25</td>
+<td>510.0</td>
+<td>917.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>117.0</td>
+<td>0.5255</td>
+<td>...</td>
+<td>joy</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>Positive</td>
+<td>0.750939</td>
+<td>Neutral</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>1.701461e+09</td>
+<td>https://twitter.com/realDonaldTrump/status/170...</td>
+<td>Donald Trump will be appearing on The View tom...</td>
+<td>2009-05-04 20:00:10</td>
+<td>34.0</td>
+<td>267.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>131.0</td>
+<td>0.7712</td>
+<td>...</td>
+<td>joy</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>Neutral</td>
+<td>0.571567</td>
+<td>Positive</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>1.737480e+09</td>
+<td>https://twitter.com/realDonaldTrump/status/173...</td>
+<td>Donald Trump reads Top Ten Financial Tips on L...</td>
+<td>2009-05-08 08:38:08</td>
+<td>13.0</td>
+<td>19.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>116.0</td>
+<td>0.6468</td>
+<td>...</td>
+<td>surprise</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>Positive</td>
+<td>0.762436</td>
+<td>Neutral</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>1.741161e+09</td>
+<td>https://twitter.com/realDonaldTrump/status/174...</td>
+<td>New Blog Post: Celebrity Apprentice Finale and...</td>
+<td>2009-05-08 15:40:15</td>
+<td>11.0</td>
+<td>26.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>103.0</td>
+<td>0.0000</td>
+<td>...</td>
+<td>joy</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>Neutral</td>
+<td>0.862625</td>
+<td>Neutral</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>1.773561e+09</td>
+<td>https://twitter.com/realDonaldTrump/status/177...</td>
+<td>"My persona will never be that of a wallflower...</td>
+<td>2009-05-12 09:07:28</td>
+<td>1375.0</td>
+<td>1945.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>109.0</td>
+<td>0.0000</td>
+<td>...</td>
+<td>anger</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>Negative</td>
+<td>0.492906</td>
+<td>Neutral</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 22 columns</p>
+</div>
+</div>
+</div>
+<div id="cell-69" class="cell" data-execution_count="114">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a crosstab to compare VADER sentiment categories with sentiment labels</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>crosstab <span class="op">=</span> pd.crosstab(df_trump_tweets_one_hot[<span class="st">'vader_sentiment_category'</span>], df_trump_tweets_one_hot[<span class="st">'sentiment_label'</span>])</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the crosstab as a heatmap</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>sns.heatmap(crosstab, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>)</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Roberta Sentiment Labels'</span>)</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'VADER Sentiment Categories'</span>)</span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Crosstab: VADER Sentiment vs Sentiment Labels'</span>)</span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-42-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That is quite interesting. I arbitrarily defined the VADER categories. It seems that a lot of the vader ones that I labeled as neutral were picked up as positive or negative by Roberta. But for the positive and negative, both methods seem to agree. If I were to change the category cutoffs, I might be able to get better agreement.</p>
+<div id="cell-71" class="cell" data-execution_count="116">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the emotion detection pipeline with the RoBERTa-based model</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>emotion_classifier <span class="op">=</span> pipeline(<span class="st">"text-classification"</span>, model<span class="op">=</span><span class="st">"cardiffnlp/twitter-roberta-base-emotion"</span>, return_all_scores<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to classify the emotions of a tweet</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_emotions(text):</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> emotion_classifier(text)</span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    emotions <span class="op">=</span> {result[<span class="st">'label'</span>]: result[<span class="st">'score'</span>] <span class="cf">for</span> result <span class="kw">in</span> results[<span class="dv">0</span>]}</span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> emotions</span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the classification function to the 'content' column and create new columns for each emotion</span></span>
+<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>emotion_results <span class="op">=</span> df_trump_tweets_one_hot[<span class="st">'content'</span>].<span class="bu">apply</span>(classify_emotions)</span>
+<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a>emotion_df <span class="op">=</span> pd.json_normalize(emotion_results)</span>
+<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the original DataFrame with the emotion DataFrame</span></span>
+<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot <span class="op">=</span> pd.concat([df_trump_tweets_one_hot, emotion_df], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the updated DataFrame</span></span>
+<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_trump_tweets_one_hot.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/philip/Documents/NWMissouri/module-07-philip/.venv/lib/python3.12/site-packages/transformers/pipelines/text_classification.py:106: UserWarning: `return_all_scores` is now deprecated,  if want a similar functionality use `top_k=None` instead of `return_all_scores=True` or `top_k=1` instead of `return_all_scores=False`.
+  warnings.warn(</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             id                                               link  \
+0  1.698309e+09  https://twitter.com/realDonaldTrump/status/169...   
+1  1.701461e+09  https://twitter.com/realDonaldTrump/status/170...   
+2  1.737480e+09  https://twitter.com/realDonaldTrump/status/173...   
+3  1.741161e+09  https://twitter.com/realDonaldTrump/status/174...   
+4  1.773561e+09  https://twitter.com/realDonaldTrump/status/177...   
+
+                                             content                date  \
+0  Be sure to tune in and watch Donald Trump on L... 2009-05-04 13:54:25   
+1  Donald Trump will be appearing on The View tom... 2009-05-04 20:00:10   
+2  Donald Trump reads Top Ten Financial Tips on L... 2009-05-08 08:38:08   
+3  New Blog Post: Celebrity Apprentice Finale and... 2009-05-08 15:40:15   
+4  "My persona will never be that of a wallflower... 2009-05-12 09:07:28   
+
+   retweets  favorites mentions hashtags  tweet_length  vader_sentiment  ...  \
+0     510.0      917.0      NaN      NaN         117.0           0.5255  ...   
+1      34.0      267.0      NaN      NaN         131.0           0.7712  ...   
+2      13.0       19.0      NaN      NaN         116.0           0.6468  ...   
+3      11.0       26.0      NaN      NaN         103.0           0.0000  ...   
+4    1375.0     1945.0      NaN      NaN         109.0           0.0000  ...   
+
+   pipeline_classification_love  pipeline_classification_sadness  \
+0                           0.0                              0.0   
+1                           0.0                              0.0   
+2                           0.0                              0.0   
+3                           0.0                              0.0   
+4                           0.0                              0.0   
+
+  pipeline_classification_surprise  sentiment_label  sentiment_score  \
+0                              0.0         Positive         0.750939   
+1                              0.0          Neutral         0.571567   
+2                              1.0         Positive         0.762436   
+3                              0.0          Neutral         0.862625   
+4                              0.0         Negative         0.492906   
+
+   vader_sentiment_category       joy  optimism     anger   sadness  
+0                   Neutral  0.020737  0.895202  0.071220  0.012842  
+1                  Positive  0.046025  0.713383  0.223212  0.017381  
+2                   Neutral  0.016363  0.956548  0.017659  0.009431  
+3                   Neutral  0.027084  0.814254  0.135028  0.023634  
+4                   Neutral  0.167143  0.018758  0.730502  0.083598  
+
+[5 rows x 26 columns]</code></pre>
+</div>
+</div>
+<div id="cell-72" class="cell" data-execution_count="118">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>df_trump_tweets_one_hot.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 43311 entries, 0 to 42844
+Data columns (total 26 columns):
+ #   Column                            Non-Null Count  Dtype         
+---  ------                            --------------  -----         
+ 0   id                                39667 non-null  float64       
+ 1   link                              39667 non-null  object        
+ 2   content                           42845 non-null  object        
+ 3   date                              39667 non-null  datetime64[ns]
+ 4   retweets                          39667 non-null  float64       
+ 5   favorites                         39667 non-null  float64       
+ 6   mentions                          19216 non-null  object        
+ 7   hashtags                          4116 non-null   object        
+ 8   tweet_length                      39667 non-null  float64       
+ 9   vader_sentiment                   39667 non-null  float64       
+ 10  token_score                       39667 non-null  float64       
+ 11  lemma_score                       39667 non-null  float64       
+ 12  pipeline_classification           39667 non-null  object        
+ 13  pipeline_classification_anger     39667 non-null  float64       
+ 14  pipeline_classification_fear      39667 non-null  float64       
+ 15  pipeline_classification_joy       39667 non-null  float64       
+ 16  pipeline_classification_love      39667 non-null  float64       
+ 17  pipeline_classification_sadness   39667 non-null  float64       
+ 18  pipeline_classification_surprise  39667 non-null  float64       
+ 19  sentiment_label                   42845 non-null  object        
+ 20  sentiment_score                   42845 non-null  float64       
+ 21  vader_sentiment_category          42845 non-null  object        
+ 22  joy                               42845 non-null  float64       
+ 23  optimism                          42845 non-null  float64       
+ 24  anger                             42845 non-null  float64       
+ 25  sadness                           42845 non-null  float64       
+dtypes: datetime64[ns](1), float64(18), object(7)
+memory usage: 8.9+ MB</code></pre>
+</div>
+</div>
+<div id="cell-73" class="cell" data-execution_count="133">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the pipeline classification categories and RoBERTa emotion categories</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>pipeline_categories <span class="op">=</span> [<span class="st">'pipeline_classification_anger'</span>, <span class="st">'pipeline_classification_fear'</span>, <span class="st">'pipeline_classification_joy'</span>, <span class="st">'pipeline_classification_love'</span>, <span class="st">'pipeline_classification_sadness'</span>, <span class="st">'pipeline_classification_surprise'</span>]</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>roberta_emotion_categories <span class="op">=</span> [<span class="st">'joy'</span>, <span class="st">'optimism'</span>, <span class="st">'anger'</span>, <span class="st">'sadness'</span>]</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the relevant columns for correlation</span></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>columns_to_include <span class="op">=</span> pipeline_categories <span class="op">+</span> roberta_emotion_categories</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>df_correlation <span class="op">=</span> df_trump_tweets_one_hot[columns_to_include]</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the correlation matrix</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> df_correlation.corr()</span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the correlation matrix as a heatmap</span></span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>))</span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>sns.heatmap(correlation_matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'coolwarm'</span>, center<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Correlation Matrix: Pipeline Classification (DistilBERT) vs RoBERTa Emotion Categories'</span>)</span>
+<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="article-summarizer_files/figure-html/cell-45-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I am not sure what to say here. There are a number of things that I think are questionable. Why is DistilBERT’s joy classification negatively correlated with RoBERTa’s Joy? Why is DistilBERT’s anger positively correlated with RoBERTa’s joy?</p>
+</section>
+</section>
+<section id="overall-summary" class="level1">
+<h1>Overall Summary</h1>
+<p>So what have I learned here? I selected the wrong dataset to get something useful out of summarizing. I should have selected a dataset that was more focused on a single topic. A list of tweets was not a good choice.</p>
+<p>I tried two different approaches to determining the sentiment of the tweets. DistillBERT and VADER. THe results weren’t directly comparable. However, the results were similar.</p>
+<p>I also tried two different approaches to determining the emotion of the tweets. DistillBERT and RoBERTa. The results left me with some uncertainty. Having a negative correlation between joy and joy seems odd. I am not sure what to make of that.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
